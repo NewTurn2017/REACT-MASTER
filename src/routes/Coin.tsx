@@ -113,6 +113,9 @@ const OverviewItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 33%;
+  color: ${(props) => props.theme.textColor};
+
   span:first-child {
     font-size: 10px;
     font-weight: 400;
@@ -130,7 +133,7 @@ const Tabs = styled.div`
 const Back = styled.div`
   margin-right: 50px;
   a {
-    color: '#fbc531';
+    color: '${(props) => props.theme.textColor}';
     font-size: 45px;
   }
 `
@@ -152,7 +155,9 @@ const Description = styled.p`
   margin: 20px 0px;
 `
 
-function Coin() {
+interface ICoinProps {}
+
+function Coin({}: ICoinProps) {
   const { coinId } = useParams<RouteParams>()
   const { state } = useLocation<RouteState>()
   const priceMatch = useRouteMatch(`/${coinId}/price`)
