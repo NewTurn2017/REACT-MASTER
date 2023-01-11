@@ -1,36 +1,30 @@
 ﻿import React from 'react'
-import { useRecoilValue } from 'recoil'
-import { toDoSelector } from '../atoms'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { Categories, categoryState, toDoSelector } from '../atoms'
 import CreateToDo from './CreateToDo'
 import ToDo from './ToDo'
 
 function ToDoList() {
-  const [toDo, doing, done] = useRecoilValue(toDoSelector)
+  const toDos = useRecoilValue(toDoSelector)
+  const [category, setCategory] = useRecoilState(categoryState)
+  const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
+    setCategory(event.currentTarget.value as any)
+  }
+
   return (
     <div>
-      <h1>To Dos</h1>
+      <h1>TO DO LIST</h1>
       <hr />
+      <select value={category} onInput={onInput}>
+        <option value={Categories.TO_DO}>할 것</option>
+        <option value={Categories.DOING}>하고있는중</option>
+        <option value={Categories.DONE}>완료</option>
+      </select>
+
       <CreateToDo />
-      <h2>To Do</h2>
-      <ul>
-        {toDo.map((toDo) => (
-          <ToDo key={toDo.id} {...toDo} />
-        ))}
-      </ul>
-      <hr />
-      <h2>Doing</h2>
-      <ul>
-        {doing.map((done) => (
-          <ToDo key={done.id} {...done} />
-        ))}
-      </ul>
-      <hr />
-      <h2>Done</h2>
-      <ul>
-        {done.map((done) => (
-          <ToDo key={done.id} {...done} />
-        ))}
-      </ul>
+      {toDos?.map((toDo) => (
+        <ToDo key={toDo.id} {...toDo} />
+      ))}
     </div>
   )
 }
