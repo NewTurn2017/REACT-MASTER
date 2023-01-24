@@ -2,7 +2,7 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import { useRecoilState } from 'recoil'
 import styled from 'styled-components'
 import { toDoState } from './atoms'
-import { Board } from './Components//Board'
+import Board from './Components/Board'
 
 const Wrapper = styled.div`
   display: flex;
@@ -21,28 +21,38 @@ const Boards = styled.div`
   gap: 10px;
 `
 
+// Todo Challange:
+// 1. Add a new Board.
+// 2. Delete a Board.
+// 3. Delete a Todo Task.
+// 4. save the state in local storage.
+
 function App() {
   const [toDos, setToDos] = useRecoilState(toDoState)
   const onDragEnd = (info: DropResult) => {
     const { destination, draggableId, source } = info
     if (!destination) return
     if (destination?.droppableId === source.droppableId) {
+      // same board movement.
       setToDos((allBoards) => {
-        const sourceBoard = [...allBoards[source.droppableId]]
-        sourceBoard.splice(source.index, 1)
-        sourceBoard.splice(destination?.index, 0, draggableId)
+        const boardCopy = [...allBoards[source.droppableId]]
+        const taskObj = boardCopy[source.index]
+        boardCopy.splice(source.index, 1)
+        boardCopy.splice(destination?.index, 0, taskObj)
         return {
           ...allBoards,
-          [source.droppableId]: sourceBoard,
+          [source.droppableId]: boardCopy,
         }
       })
     }
-    if (destination?.droppableId !== source.droppableId) {
+    if (destination.droppableId !== source.droppableId) {
+      // cross board movement
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]]
+        const taskObj = sourceBoard[source.index]
         const destinationBoard = [...allBoards[destination.droppableId]]
         sourceBoard.splice(source.index, 1)
-        destinationBoard.splice(destination?.index, 0, draggableId)
+        destinationBoard.splice(destination?.index, 0, taskObj)
         return {
           ...allBoards,
           [source.droppableId]: sourceBoard,
@@ -56,7 +66,7 @@ function App() {
       <Wrapper>
         <Boards>
           {Object.keys(toDos).map((boardId) => (
-            <Board boardId={boardId} toDos={toDos[boardId]} />
+            <Board boardId={boardId} key={boardId} toDos={toDos[boardId]} />
           ))}
         </Boards>
       </Wrapper>
